@@ -2,8 +2,8 @@
 name: service-builder
 description: |
   Generate or modify a CIB seven business service from its markdown spec under
-  docs/business/services/<service>/ of a service pack (packs/reference/ in the
-  core repository, the repository root in a pack repository). Reads README.md, forms/*.md, service-tasks/*.md,
+  docs/business/services/<service>/ of a service pack (the repository root of a
+  pack repository; packs/test/, the core test pack, in the core repository). Reads README.md, forms/*.md, service-tasks/*.md,
   and decisions/*.md; emits BPMN, DMN, FreeMarker payload templates, React form
   components, registry entries, MCP manifest + LLM training markdown for the
   /mcp microservice, and a regenerated mermaid diagram. Use when asked to "build
@@ -31,10 +31,14 @@ output**, so modifications work by editing the spec and re-running.
 
 The skill writes into a **service pack**, written `<pack>` below:
 
+- **In a pack repository** (the usual place; a vendored copy of this skill,
+  `pack.yaml` at the repository root): see below.
 - **In the core repository** (this skill at `.claude/skills/service-builder/`
-  beside `packs/reference/`): `<pack>` is `packs/reference`, the reference
-  pack. `<tools>` is `scripts/` (run `npm ci` there once). Check the result
-  with `scripts/pack-check.sh` and the core's test suites.
+  beside `packs/test/`): `<pack>` is `packs/test`, the core test pack, a
+  frozen copy of the reference services that the core's tests run on. Change
+  it only when a core change needs it to. `<tools>` is `scripts/` (run
+  `npm ci` there once). Check the result with `scripts/pack-check.sh` and the
+  core's test suites.
 - **In a pack repository** (a vendored copy of this skill, `pack.yaml` at the
   repository root): `<pack>` is the repository root, and `<tools>` is
   `.claude/skills/service-builder/tools/` (run `npm ci` there once). The
@@ -44,9 +48,11 @@ The skill writes into a **service pack**, written `<pack>` below:
   `scripts/pack-check.sh <pack-dir>` from a checkout of the core version in
   `VERSION` (the pack repository's CI does that).
 
-Paths below without `<pack>/` are the core repository's. Links to the
-reference pack resolve in the core repository; a vendored copy has them
-rewritten (`scripts/package-service-builder.mjs`).
+Paths below without `<pack>/` are the core repository's. The examples below
+link to the core test pack's copy of the reference services; a vendored copy
+links them to the reference pack's repository,
+[krixerx/eregistrations-reference-pack](https://github.com/krixerx/eregistrations-reference-pack)
+(`scripts/package-service-builder.mjs`).
 
 Two reference services, both complete specs (README, `forms/`,
 `service-tasks/`, `decisions/`, `data/` or `consent.md`, `build/`); read
@@ -60,18 +66,18 @@ both before generating a new service:
 
 | | vehicle-registration | business-registration |
 |---|---|---|
-| Spec | [`README.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/vehicle-registration/README.md) | [`README.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/business-registration/README.md) |
-| BPMN | [`vehicle-registration.bpmn`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/engine/processes/vehicle-registration/vehicle-registration.bpmn) | [`business-registration.bpmn`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/engine/processes/business-registration/business-registration.bpmn) |
-| DMN | [`vehicle-auto-approval.dmn`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/engine/processes/vehicle-registration/vehicle-auto-approval.dmn) | [`business-auto-approval.dmn`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/engine/processes/business-registration/business-auto-approval.dmn) |
-| Forms | [`owner-vehicle.json`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/frontend/forms/owner-vehicle.json), [`vehicle-review.json`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/frontend/forms/vehicle-review.json) | [`business-details.json`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/frontend/forms/business-details.json), [`review-business-registration.json`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/frontend/forms/review-business-registration.json) |
-| Service tasks | [`service-tasks/`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/vehicle-registration/service-tasks/) | [`service-tasks/`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/business-registration/service-tasks/) |
-| MCP manifest | [`build/mcp-service.json`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/vehicle-registration/build/mcp-service.json) | [`build/mcp-service.json`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/business-registration/build/mcp-service.json) |
-| MCP training | [`build/mcp-training.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/vehicle-registration/build/mcp-training.md) | [`build/mcp-training.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/business-registration/build/mcp-training.md) |
+| Spec | [`README.md`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/vehicle-registration/README.md) | [`README.md`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/business-registration/README.md) |
+| BPMN | [`vehicle-registration.bpmn`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/engine/processes/vehicle-registration/vehicle-registration.bpmn) | [`business-registration.bpmn`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/engine/processes/business-registration/business-registration.bpmn) |
+| DMN | [`vehicle-auto-approval.dmn`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/engine/processes/vehicle-registration/vehicle-auto-approval.dmn) | [`business-auto-approval.dmn`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/engine/processes/business-registration/business-auto-approval.dmn) |
+| Forms | [`owner-vehicle.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/frontend/forms/owner-vehicle.json), [`vehicle-review.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/frontend/forms/vehicle-review.json) | [`business-details.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/frontend/forms/business-details.json), [`review-business-registration.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/frontend/forms/review-business-registration.json) |
+| Service tasks | [`service-tasks/`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/vehicle-registration/service-tasks/) | [`service-tasks/`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/business-registration/service-tasks/) |
+| MCP manifest | [`build/mcp-service.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/vehicle-registration/build/mcp-service.json) | [`build/mcp-service.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/business-registration/build/mcp-service.json) |
+| MCP training | [`build/mcp-training.md`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/vehicle-registration/build/mcp-training.md) | [`build/mcp-training.md`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/business-registration/build/mcp-training.md) |
 
 Cross-service artifacts:
 
 - Form registry: [`frontend/src/forms/registry.ts`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/frontend/src/forms/registry.ts) (full rewrite per run)
-- Aggregated MCP index: [`<pack>/docs/business/services/build/services.json`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/build/services.json)
+- Aggregated MCP index: [`<pack>/docs/business/services/build/services.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/build/services.json)
 - Mermaid generator: [`scripts/bpmn-to-mermaid.mjs`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/scripts/bpmn-to-mermaid.mjs)
 
 The top-level [`README.md` § "Add or modify a service"](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/README.md#add-or-modify-a-service)
@@ -722,7 +728,7 @@ in the README's variables table.
 
 Review-style forms (a read-only summary plus an outcome button row) are
 form definitions now, not TSX: see
-[`vehicle-review.json`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/frontend/forms/vehicle-review.json),
+[`vehicle-review.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/frontend/forms/vehicle-review.json),
 whose actions **Approve** / **Send back** complete with different `decision`
 values.
 
@@ -790,9 +796,9 @@ generates three artifacts: a per-service manifest (data), per-service
 training markdown (prose), and an aggregated index.
 
 The reference output for `vehicleRegistration` lives at
-[`<pack>/docs/business/services/vehicle-registration/build/mcp-service.json`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/vehicle-registration/build/mcp-service.json)
+[`<pack>/docs/business/services/vehicle-registration/build/mcp-service.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/vehicle-registration/build/mcp-service.json)
 and
-[`<pack>/docs/business/services/vehicle-registration/build/mcp-training.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/packs/reference/docs/business/services/vehicle-registration/build/mcp-training.md).
+[`<pack>/docs/business/services/vehicle-registration/build/mcp-training.md`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/vehicle-registration/build/mcp-training.md).
 Read them before generating a new service — same shape, same field order.
 
 ### 11.1 `mcp-service.json`
