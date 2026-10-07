@@ -4,10 +4,8 @@ Guidance for Claude Code in this service pack repository. The pack is data
 for the eRegistrations core: no code of its own runs. `README.md` explains
 the layout.
 
-Until the pack moves to its own repository it sits in the core repository
-as `packs/reference/`; there the core's root `CLAUDE.md` governs, "the core
-is not here" below does not hold, and the core's own
-`.claude/skills/service-builder/` is the one to run.
+The core is [krixerx/cib7-react-poc](https://github.com/krixerx/cib7-react-poc),
+at the release `docker/core.conf` names.
 
 ## Rules
 
