@@ -57,4 +57,6 @@ jobs:
       - run: npm ci
         working-directory: core/mcp
 
-      - run: core/scripts/pack-check.sh "$GITHUB_WORKSPACE/pack"
+      # Through bash: a core release may store the script without the execute
+      # bit (v2.0.0 does), and a tag cannot be fixed afterwards.
+      - run: bash core/scripts/pack-check.sh "$GITHUB_WORKSPACE/pack"
