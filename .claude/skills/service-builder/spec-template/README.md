@@ -16,10 +16,10 @@
 
 **When to read this:** before changing the <service-id> flow, its forms, or
 its integrations. Cross-cutting topics live in
-[`docs/architecture.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/docs/architecture.md),
-[`docs/cib7.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/docs/cib7.md),
-[`docs/frontend.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/docs/frontend.md), and
-[`docs/human-role-react-forms-spec.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/docs/human-role-react-forms-spec.md).
+[`docs/architecture.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/docs/architecture.md),
+[`docs/cib7.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/docs/cib7.md),
+[`docs/frontend.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/docs/frontend.md), and
+[`docs/human-role-react-forms-spec.md`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/docs/human-role-react-forms-spec.md).
 
 ## Catalog
 
@@ -204,7 +204,7 @@ from those alone.>
 ## Flow diagram
 
 The block below is generated from the BPMN by
-[`scripts/bpmn-to-mermaid.mjs`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/scripts/bpmn-to-mermaid.mjs).
+[`scripts/bpmn-to-mermaid.mjs`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/scripts/bpmn-to-mermaid.mjs).
 Do not edit between the markers — the service-builder skill refreshes it on
 every run.
 

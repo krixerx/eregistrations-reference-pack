@@ -76,11 +76,11 @@ both before generating a new service:
 
 Cross-service artifacts:
 
-- Form registry: [`frontend/src/forms/registry.ts`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/frontend/src/forms/registry.ts) (full rewrite per run)
+- Form registry: [`frontend/src/forms/registry.ts`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/frontend/src/forms/registry.ts) (full rewrite per run)
 - Aggregated MCP index: [`<pack>/docs/business/services/build/services.json`](https://github.com/krixerx/eregistrations-reference-pack/blob/main/docs/business/services/build/services.json)
-- Mermaid generator: [`scripts/bpmn-to-mermaid.mjs`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/scripts/bpmn-to-mermaid.mjs)
+- Mermaid generator: [`scripts/bpmn-to-mermaid.mjs`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/scripts/bpmn-to-mermaid.mjs)
 
-The top-level [`README.md` § "Add or modify a service"](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/README.md#add-or-modify-a-service)
+The top-level [`README.md` § "Add or modify a service"](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/README.md#add-or-modify-a-service)
 explains the human workflow around this skill.
 
 ---
@@ -133,7 +133,7 @@ and ask** rather than guessing.
 The three `build/`-typed outputs above are the contract with the `mcp/` Node
 sidecar — the pack's `docker/mcp.Dockerfile` layer copies
 `<pack>/docs/business/services/` into the image and the loader walks every `<service>/build/mcp-service.json + mcp-training.md`
-pair. See [`mcp/src/services/manifest.ts`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/mcp/src/services/manifest.ts)
+pair. See [`mcp/src/services/manifest.ts`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/mcp/src/services/manifest.ts)
 for the consumer side.
 
 **Deployment convention:** each service's BPMN + DMN files go into their own
@@ -365,7 +365,7 @@ short-circuit on the first one.
 |---|---|
 | Unique kebab-case ids | Every form id, service-task id, decision id, gateway id, sequence-flow id is `^[a-z][a-z0-9-]*$` and globally unique within the service spec. |
 | Variable consistency | Every process variable mentioned in any spec file matches a row in the README's variables table (same casing, same type). Misspellings between `firstName` and `firstname` are caught here. |
-| Roles are slash-less | `candidateGroups` and group references use the engine view (`applicant`, not `/applicant`) — see [project memory: cibseven-keycloak strips group-path slash](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/docs/cib7.md#bpmn-files). |
+| Roles are slash-less | `candidateGroups` and group references use the engine view (`applicant`, not `/applicant`) — see [project memory: cibseven-keycloak strips group-path slash](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/docs/cib7.md#bpmn-files). |
 | Large variables are `byte[]` | Anything declared with type `byte[]` in the README must carry a comment "stored bytes to spill to ACT_GE_BYTEARRAY" in BPMN output; anything > 4 kB **must** be declared `byte[]`. |
 | DMN TTL | Every emitted `.dmn` carries `camunda:historyTimeToLive` (engine refuses deployment without it). |
 | BPMN TTL | The `<bpmn:process>` element carries `camunda:historyTimeToLive`. Match the value in the README; default `P30D` if unspecified. |
@@ -654,7 +654,7 @@ and that every text a form definition uses exists.
 
 One file per form id, under `frontend/src/forms/<form-id>/<PascalCase>Form.tsx`.
 Must implement the `FormProps` contract from
-[`frontend/src/forms/types.ts`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/frontend/src/forms/types.ts):
+[`frontend/src/forms/types.ts`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/frontend/src/forms/types.ts):
 
 ```tsx
 import { useState, type FormEvent } from 'react';
@@ -790,7 +790,7 @@ Then run the script — it fills it in.
 ## 11. MCP manifest authoring
 
 The `mcp/` sidecar (its consumer code is at
-[`mcp/src/services/manifest.ts`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/mcp/src/services/manifest.ts))
+[`mcp/src/services/manifest.ts`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/mcp/src/services/manifest.ts))
 serves the LLM-callable tools. To make a service MCP-callable, the skill
 generates three artifacts: a per-service manifest (data), per-service
 training markdown (prose), and an aggregated index.
@@ -931,7 +931,7 @@ paragraph.
 Path: `<pack>/docs/business/services/build/services.json`. The MCP sidecar reads
 this as the top-level discovery surface (also served at
 `/.well-known/mcp/services.json` via nginx — see
-[`frontend/nginx.conf`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.0/frontend/nginx.conf)). Schema:
+[`frontend/nginx.conf`](https://github.com/krixerx/cib7-react-poc/blob/v2.0.1/frontend/nginx.conf)). Schema:
 
 ```json
 {
