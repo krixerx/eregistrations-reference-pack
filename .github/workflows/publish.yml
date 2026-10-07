@@ -30,11 +30,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { layer: frontend, core: frontend-core, arg: FRONTEND_CORE }
-          - { layer: engine, core: cib7-core, arg: ENGINE_CORE }
-          - { layer: backend, core: backend-core, arg: BACKEND_CORE }
-          - { layer: mcp, core: mcp-core, arg: MCP_CORE }
-          - { layer: mobile, core: mobile-core, arg: MOBILE_CORE }
+          - { layer: frontend, core: frontend-core, module: frontend, arg: FRONTEND_CORE }
+          - { layer: engine, core: cib7-core, module: cib7, arg: ENGINE_CORE }
+          - { layer: backend, core: backend-core, module: backend, arg: BACKEND_CORE }
+          - { layer: mcp, core: mcp-core, module: mcp, arg: MCP_CORE }
+          - { layer: mobile, core: mobile-core, module: mobile, arg: MOBILE_CORE }
     steps:
       - uses: actions/checkout@v4
 
@@ -73,7 +73,21 @@ jobs:
           tags: scan/${{ matrix.layer }}:${{ github.sha }}
 
       # The core's own findings are the core release's to fix (or accept):
-      # this pack adds only data, so a finding here means a core upgrade.
+      # this pack adds only data, so it scans with the findings that release
+      # accepted for the image (its <module>/.trivyignore.yaml, each with a
+      # reason, a path scope and an expiry), and anything else means a core
+      # upgrade.
+      - id: accepted
+        name: The core release's accepted findings
+        run: |
+          . docker/core.conf
+          url="https://raw.githubusercontent.com/$CORE_REPO/v$CORE_VERSION/${{ matrix.module }}/.trivyignore.yaml"
+          if curl -fsSL "$url" -o core.trivyignore.yaml; then
+            echo "file=core.trivyignore.yaml" >> "$GITHUB_OUTPUT"
+          else
+            echo "file=" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Scan image (Trivy)
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
@@ -82,6 +96,7 @@ jobs:
           ignore-unfixed: true
           exit-code: "1"
           format: table
+          trivyignores: ${{ steps.accepted.outputs.file }}
 
       - uses: docker/build-push-action@v6
         with:
