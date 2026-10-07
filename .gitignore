@@ -1,0 +1,5 @@
+# Editor project files
+.project
+.settings/
+.idea/
+.vscode/

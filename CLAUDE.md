@@ -40,3 +40,11 @@ core release it names. Locally, from a checkout of the core at that tag
 
 `scripts/update-core.sh <x.y.z>` sets the core release and vendors its
 service-builder; never edit `.claude/skills/service-builder/` by hand.
+
+## Publishing and deploying
+
+A merge to `main` publishes the images (`publish.yml`, see `README.md`).
+Deployment is not done from here: the core repository's Deploy to VM
+workflow takes this repository's commit as `pack_ref`. Nothing in this
+repository may hold a secret; the users file carries demo passwords only
+for the reference instance.

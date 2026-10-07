@@ -34,6 +34,42 @@ run `/service-builder` in Claude Code, and commit the spec with what it
 generated. Never hand-edit a generated file. A pull request runs the core's
 pack checks; a merge to `main` publishes the images.
 
+Each spec also carries the service's tests as examples (decision and fee
+examples, registry seeds, submission and behaviour examples, template
+examples, flow scenarios); the core's pack checks run them, so a rule change
+comes with the example that shows it.
+
+## Publishing the images
+
+`publish.yml` builds the five layers on the core images of the release in
+`docker/core.conf`, scans each with that release's accepted findings, and
+pushes them as `<IMAGE_PREFIX>-<layer>`, tagged `latest`, the commit's
+7-character SHA and the `version` from `pack.yaml`. It needs, under the
+repository's Settings → Secrets and variables → Actions:
+
+| Name | Kind | Value |
+|---|---|---|
+| `IMAGE_PREFIX` | variable | e.g. `docker.io/krixerx/eregistrations-reference` |
+| `REGISTRY` | variable, optional | registry host, default `docker.io` |
+| `REGISTRY_USERNAME` | secret | the registry account |
+| `REGISTRY_TOKEN` | secret | an access token with write access |
+
+Bump `version` in `pack.yaml` when the pack changes in a way an operator
+should see; the SHA tag is what deployments pin.
+
+## Deploying
+
+An instance runs this pack's images on the core's deploy kit (`deploy/` in
+the core repository). The core's **Deploy to VM** workflow takes this
+repository's commit as `pack_ref` (default `main`): it reads the core
+release from `docker/core.conf`, checks that this commit's images exist,
+ships `keycloak/cib7-poc-users-0.json` and `branding/` to the host's
+`pack/`, and pins the image tags in the host's `.env`. Publish first, wait
+for `publish.yml` to finish, then deploy. Rolling back is deploying an older
+commit. The users file is imported only on Keycloak's first start, so a
+change to it needs the instance's Keycloak recreated (and the engine
+restarted after it).
+
 ## Moving to another core release
 
 ```bash
