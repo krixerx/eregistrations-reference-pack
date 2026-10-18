@@ -42,7 +42,8 @@ comes with the example that shows it.
 ## Publishing the images
 
 `publish.yml` builds the five layers on the core images of the release in
-`docker/core.conf`, scans each with that release's accepted findings, and
+`docker/core.conf`, checks that each still runs as the core image's
+non-root user, scans each with that release's accepted findings, and
 pushes them as `<IMAGE_PREFIX>-<layer>`, tagged `latest`, the commit's
 7-character SHA and the `version` from `pack.yaml`. It needs, under the
 repository's Settings → Secrets and variables → Actions:

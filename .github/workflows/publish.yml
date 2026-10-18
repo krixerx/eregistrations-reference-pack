@@ -80,6 +80,21 @@ jobs:
           push: false
           tags: scan/${{ matrix.layer }}:${{ github.sha }}
 
+      # The layers only copy data, so each keeps its core image's non-root
+      # USER (docs/security.md rule 11 in the core). Checked on the image we
+      # push rather than the Dockerfile text: a layer that switches to root
+      # and a core release that lost its USER both fail here.
+      - name: Image runs as non-root
+        run: |
+          user="$(docker image inspect --format '{{.Config.User}}' scan/${{ matrix.layer }}:${{ github.sha }})"
+          case "${user%%:*}" in
+            "" | root | 0)
+              echo "::error::the ${{ matrix.layer }} image runs as '${user:-root}'; it must keep the core image's non-root USER"
+              exit 1
+              ;;
+          esac
+          echo "the ${{ matrix.layer }} image runs as $user"
+
       # The core's own findings are the core release's to fix (or accept):
       # this pack adds only data, so it scans with the findings that release
       # accepted for the image (its <module>/.trivyignore.yaml, each with a
