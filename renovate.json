@@ -4,7 +4,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "The core release (docker/core.conf); the PR must also run scripts/update-core.sh, which check.yml enforces through the vendored skill's VERSION.",
+      "description": "The core release (docker/core.conf); the PR must also run scripts/update-core.sh, which check.yml enforces through the vendored skill's VERSION and the core image digests.",
       "managerFilePatterns": ["/^docker/core\\.conf$/"],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\nCORE_VERSION=(?<currentValue>\\S+)"

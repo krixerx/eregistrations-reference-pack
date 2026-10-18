@@ -73,12 +73,18 @@ restarted after it).
 ## Moving to another core release
 
 ```bash
-scripts/update-core.sh <x.y.z>   # CORE_VERSION + the matching service-builder
+scripts/update-core.sh <x.y.z>   # CORE_VERSION, core image digests, service-builder
 ```
+
+The script pins each core image by digest in `core.conf` (it needs
+`docker buildx`, not a running daemon), so a release tag pushed again cannot
+change what the pack builds on. `check.yml` fails when a tag no longer points
+at the pinned digest; find out why before rerunning the script to accept it.
 
 Renovate proposes new core releases by changing `docker/core.conf`; that pull
 request fails `check.yml` until `scripts/update-core.sh` has run in it,
-because the vendored service-builder must come from the same release. Read
+because the vendored service-builder and the digests must come from the same
+release. Read
 the core release notes first: a new platform API major means changing the
 pack.
 
@@ -87,7 +93,7 @@ pack.
 ```bash
 . docker/core.conf
 docker build -f docker/engine.Dockerfile \
-  --build-arg ENGINE_CORE=$CORE_IMAGES/cib7-poc-cib7-core:$CORE_VERSION .
+  --build-arg ENGINE_CORE=$CORE_IMAGES/cib7-poc-cib7-core:$CORE_VERSION@$ENGINE_CORE_DIGEST .
 ```
 
 The same for `frontend`, `backend`, `mcp` and `mobile` (`FRONTEND_CORE`,

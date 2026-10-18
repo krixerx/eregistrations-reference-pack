@@ -1,8 +1,9 @@
 # The pack against the platform API of the core release it names
 # (docker/core.conf): the core's scripts/pack-check.sh at that tag, which runs
 # the engine's, backend's, frontend's and MCP sidecar's pack checks on this
-# pack. Also refuses a vendored service-builder from another core release, so
-# a CORE_VERSION bump (Renovate) needs scripts/update-core.sh in the same PR.
+# pack. Also refuses a vendored service-builder from another core release and
+# core image digests that the release's tags no longer point at, so a
+# CORE_VERSION bump (Renovate) needs scripts/update-core.sh in the same PR.
 #
 # Inert in the core repository (GitHub reads only the root .github/); live
 # once this directory is the pack repository's root.
@@ -34,6 +35,28 @@ jobs:
         run: |
           grep -qx "core ${{ steps.core.outputs.version }}" pack/.claude/skills/service-builder/VERSION \
             || { echo "::error::.claude/skills/service-builder is not from core ${{ steps.core.outputs.version }}; run scripts/update-core.sh ${{ steps.core.outputs.version }}"; exit 1; }
+
+      # The digests in core.conf name the exact core images this pack was
+      # checked against. A CORE_VERSION bump without update-core.sh fails here,
+      # and so does a release tag pushed again since: find out why before
+      # accepting the new image by rerunning the script.
+      - name: Core image digests match the core release
+        working-directory: pack
+        run: |
+          . docker/core.conf
+          fail=0
+          for pair in ENGINE_CORE:cib7-core FRONTEND_CORE:frontend-core \
+            BACKEND_CORE:backend-core MCP_CORE:mcp-core MOBILE_CORE:mobile-core; do
+            digest_var="${pair%%:*}_DIGEST"
+            pinned="${!digest_var:-}"
+            image="$CORE_IMAGES/cib7-poc-${pair#*:}:$CORE_VERSION"
+            current="$(docker buildx imagetools inspect "$image" --format '{{.Manifest.Digest}}')"
+            if [ "$pinned" != "$current" ]; then
+              echo "::error::docker/core.conf: $digest_var is '$pinned' but $image is $current. After a CORE_VERSION bump, run scripts/update-core.sh $CORE_VERSION; otherwise the release tag was pushed again."
+              fail=1
+            fi
+          done
+          exit "$fail"
 
       - uses: actions/checkout@v4
         with:

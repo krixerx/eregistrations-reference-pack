@@ -1,5 +1,7 @@
 # The pack's images: each a thin layer (docker/<layer>.Dockerfile) on the core
-# release's image named in docker/core.conf, scanned with Trivy and pushed as
+# release's image named in docker/core.conf, pinned by its digest there (a
+# release tag pushed again cannot change what we build on), scanned with
+# Trivy and pushed as
 # <IMAGE_PREFIX>-<layer>, tagged latest, the commit's short SHA and the pack
 # version from pack.yaml. Nothing is published unless check.yml passes.
 #
@@ -41,7 +43,13 @@ jobs:
       - id: core
         run: |
           . docker/core.conf
-          echo "image=$CORE_IMAGES/cib7-poc-${{ matrix.core }}:$CORE_VERSION" >> "$GITHUB_OUTPUT"
+          digest_var="${{ matrix.arg }}_DIGEST"
+          digest="${!digest_var:-}"
+          if [ -z "$digest" ]; then
+            echo "::error::docker/core.conf has no $digest_var; run scripts/update-core.sh $CORE_VERSION"
+            exit 1
+          fi
+          echo "image=$CORE_IMAGES/cib7-poc-${{ matrix.core }}:$CORE_VERSION@$digest" >> "$GITHUB_OUTPUT"
           pack_version=$(sed -n 's/^version: *"\{0,1\}\([0-9.]*\).*/\1/p' pack.yaml)
           echo "pack_version=$pack_version" >> "$GITHUB_OUTPUT"
 
